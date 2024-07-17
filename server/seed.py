@@ -5,16 +5,16 @@ from random import randint, choice as rc
 from datetime import datetime
 
 # Remote library imports
-from faker import Faker
+# from faker import Faker
 
 # Local imports
 from app import app
 from config import db 
 from models import Traveler, TravelerDestination, Destination, Activity, Itinerary
 
-if __name__ == '__main__':
-    fake = Faker()
-    with app.app_context():
+# if __name__ == '__main__':
+#     fake = Faker()
+with app.app_context():
         # db.create_all()
         print("Starting seed...")
         # Seed code goes here!
