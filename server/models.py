@@ -12,17 +12,16 @@ class Traveler(db.Model, SerializerMixin):
     
     __tablename__ = 'travelers'
     
-    serialize_rules = ('-traveler_destinations.traveler', '-traveler_destinations', '-activities.traveler', '-activities',)
+    serialize_rules = ('-traveler_destinations.traveler', '-activities.traveler')
     
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(50))
     _password_hash = db.Column(db.String(50))
     birth_date = db.Column(db.String)
     
-    
     traveler_destinations = db.relationship('TravelerDestination', back_populates='traveler', cascade='all, delete-orphan')
     
-    activities = db.Relationship('Activity', back_populates='traveler', cascade='all, delete-orphan')
+    activities = db.relationship('Activity', back_populates='traveler', cascade='all, delete-orphan')
     
     @hybrid_property
     def password_hash(self):
@@ -62,7 +61,7 @@ class Destination(db.Model, SerializerMixin):
     
     __tablename__ = 'destinations'
     
-    serialize_rules = ('-traveler_destinations.destination',)
+    serialize_rules = ('-traveler_destinations.destination', '-activity_destinations.destination', '-activities')
     
     id = db.Column(db.Integer, primary_key=True)
     city = db.Column(db.String, nullable=False)
@@ -73,11 +72,40 @@ class Destination(db.Model, SerializerMixin):
     # Relationship mapping the destination to related traveler
     traveler_destinations = db.relationship('TravelerDestination', back_populates='destination')
     
+    # Relationship mapping the Destination to related Activity 
+    activity_destinations = db.relationship('ActivityDestination', back_populates='destination', cascade='all, delete-orphan')
+    
+    # Need to build association relationship -> #association_proxy = to associate activities with the Destination (condense information into a clearer list)
+    # Association proxy to get Actvities for this destination through ActivityDestination
+    activities = association_proxy('activity_destinations', 'activity', creator=lambda activity_obj: ActivityDestination(activity=activity_obj))
+    
+    
+class ActivityDestination(db.Model, SerializerMixin):
+    
+    __tablename__ = 'activity_destinations'
+    
+    serialize_rules = ('-destination.activity_destinations', '-activity.activity_destinations')
+    
+    id = db.Column(db.Integer, primary_key=True)
+    
+    # Foreign Keys
+    
+    destination_id = db.Column(db.Integer, db.ForeignKey('destinations.id'))
+    activity_id = db.Column(db.Integer, db.ForeignKey('activities.id'))
+    
+    
+    # db.relationships as well
+    
+    destination = db.relationship('Destination', back_populates='activity_destinations')
+    
+    activity = db.relationship('Activity', back_populates='activity_destinations')
+    
+    
 class Activity(db.Model, SerializerMixin):
     
     __tablename__ = 'activities'
     
-    serialize_rules = ('-traveler.activities', '-itinerary.activities')
+    serialize_rules = ('-traveler.activities', '-itinerary.activities', '-activity_destinations.activity', '-destinations')
     
     id = db.Column(db.Integer, primary_key=True)
     activity_name = db.Column(db.String, nullable=False)
@@ -87,12 +115,18 @@ class Activity(db.Model, SerializerMixin):
     #Foreign Keys
     traveler_id = db.Column(db.Integer, db.ForeignKey('travelers.id'))
     itinerary_id = db.Column(db.Integer, db.ForeignKey('itineraries.id'))
-    
+
     # Relationship mapping the Activity to related traveler
     traveler = db.relationship('Traveler', back_populates='activities')
     
     # Relationship mapping the Activity to related itinerary
     itinerary = db.relationship('Itinerary', back_populates='activities')
+    
+    # Relationship Mapping the Activity to related destination
+    activity_destinations = db.relationship('ActivityDestination', back_populates='activity', cascade='all, delete-orphan')
+    
+    # Association proxy to get destinations for this activity through ActivityDestination
+    destinations = association_proxy('activity_destinations', 'destination', creator=lambda destination_obj: ActivityDestination(destination=destination_obj))
     
     
 class Itinerary(db.Model, SerializerMixin):

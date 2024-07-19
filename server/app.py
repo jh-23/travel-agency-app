@@ -11,7 +11,7 @@ from sqlalchemy.exc import IntegrityError
 # Local imports
 from config import app, db, api
 # Add your model imports
-from models import Traveler, TravelerDestination, Destination, Activity, Itinerary
+from models import Traveler, TravelerDestination, Destination, ActivityDestination, Activity, Itinerary
 
 # Views go here!
 
@@ -25,7 +25,7 @@ class Travelers(Resource):
     
     def get(self):
         
-        traveler_dict_list = [traveler.to_dict(only=['username']) for traveler in Traveler.query.all()]
+        traveler_dict_list = [traveler.to_dict() for traveler in Traveler.query.all()]
         
         response = make_response(
             traveler_dict_list,
@@ -36,11 +36,13 @@ class Travelers(Resource):
 
 api.add_resource(Travelers, '/travelers')
 
+# single traveler resource
+
 class AllDestinations(Resource):
     
     def get(self):
         
-        destination_dict_list = [destination.to_dict(only=('city', 'state', 'country', 'image')) for destination in Destination.query.all()]
+        destination_dict_list = [destination.to_dict() for destination in Destination.query.all()]
         
         response = make_response(
             destination_dict_list,
@@ -53,7 +55,18 @@ api.add_resource(AllDestinations, '/alldestinations')
 
 class ActivityByDestination(Resource):
 
-    pass
+    def get(self):
+        
+        activity_by_destination_list = [activity.to_dict() for activity in ActivityDestination.query.all()]
+        
+        response = make_response(
+            activity_by_destination_list,
+            200
+        )
+        
+        return response 
+    
+api.add_resource(ActivityByDestination, '/activitybydestination')
 
 
 

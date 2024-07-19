@@ -10,7 +10,7 @@ from datetime import datetime
 # Local imports
 from app import app
 from config import db 
-from models import Traveler, TravelerDestination, Destination, Activity, Itinerary
+from models import Traveler, TravelerDestination, Destination, ActivityDestination, Activity, Itinerary
 
 # if __name__ == '__main__':
 #     fake = Faker()
@@ -89,6 +89,39 @@ with app.app_context():
         destinations_to_add.append(destination1)
         destinations_to_add.append(destination2)
         db.session.add_all(destinations_to_add)
+        
+        # Seed ActivityDestination to Database
+        activity_destinations_to_add = []
+        
+        activity_destination_1 = (ActivityDestination(
+            id=1,
+            destination_id=1,
+            activity_id=1
+        ))
+        
+        activity_destination_2 = (ActivityDestination(
+            id=2,
+            destination_id=1,
+            activity_id=2
+        ))
+        
+        activity_destination_3 = (ActivityDestination(
+            id=3,
+            destination_id=2,
+            activity_id=3
+        ))
+        
+        activity_destination_4 = (ActivityDestination(
+            id=4,
+            destination_id=2,
+            activity_id=4
+        ))
+        
+        activity_destinations_to_add.append(activity_destination_1)
+        activity_destinations_to_add.append(activity_destination_2)
+        activity_destinations_to_add.append(activity_destination_3)
+        activity_destinations_to_add.append(activity_destination_4)
+        db.session.add_all(activity_destinations_to_add)
         
         # Seed Activity Column
         
