@@ -3,7 +3,7 @@
 # Standard library imports
 
 # Remote library imports
-from flask import request, make_response, session
+from flask import request, make_response, session, jsonify
 from flask_restful import Resource
 from flask_cors import CORS
 from sqlalchemy.exc import IntegrityError
@@ -25,7 +25,7 @@ class Travelers(Resource):
     
     def get(self):
         
-        traveler_dict_list = [traveler.to_dict() for traveler in Traveler.query.all()]
+        traveler_dict_list = [traveler.to_dict(only=('username', 'birth_date')) for traveler in Traveler.query.all()]
         
         response = make_response(
             traveler_dict_list,
@@ -36,13 +36,28 @@ class Travelers(Resource):
 
 api.add_resource(Travelers, '/travelers')
 
+class TravelerDestinations(Resource):
+    
+    def get(self, id):
+        
+        response_dict = Traveler.query.filter_by(id=id).first().to_dict(only=('traveler_destinations.destination.city', 'traveler_destinations.destination.state', 'traveler_destinations.destination.country', 'traveler_destinations.destination.image'))
+        
+        response = make_response(
+            response_dict,
+            200
+        )
+        
+        return response
+    
+api.add_resource(TravelerDestinations, '/travelerdestinations/<int:id>')
+
 # single traveler resource
 
 class AllDestinations(Resource):
     
     def get(self):
         
-        destination_dict_list = [destination.to_dict() for destination in Destination.query.all()]
+        destination_dict_list = [destination.to_dict(only=('city', 'state', 'country', 'image')) for destination in Destination.query.all()]
         
         response = make_response(
             destination_dict_list,
@@ -53,20 +68,68 @@ class AllDestinations(Resource):
     
 api.add_resource(AllDestinations, '/alldestinations')
 
+class AllDestinations1(Resource):
+    
+    def get(self):
+    
+        destination_list = [destination.to_dict() for destination in Destination.query.all()]
+    
+        response = make_response(
+            destination_list,
+            200
+        )
+    
+        return response
+
+api.add_resource(AllDestinations1, '/alldestinations1')
+
+
 class ActivityByDestination(Resource):
 
-    def get(self):
-        
-        activity_by_destination_list = [activity.to_dict() for activity in ActivityDestination.query.all()]
+    def get(self, id):
+    
+        response_dict = Destination.query.filter_by(id=id).first().to_dict(only=('activity_destinations.activity.activity_description', 'activity_destinations.activity.activity_image', 'activity_destinations.activity.activity_name'))
         
         response = make_response(
-            activity_by_destination_list,
+            response_dict,
             200
         )
         
         return response 
     
-api.add_resource(ActivityByDestination, '/activitybydestination')
+api.add_resource(ActivityByDestination, '/activitybydestination/<int:id>')
+
+class Activities(Resource):
+    
+    def get(self, id):
+        
+        response_dict = Activity.query.filter_by(id=id).first().to_dict()
+        
+        response = make_response(
+            response_dict,
+            200
+        )
+        
+        return response
+
+api.add_resource(Activities, '/activities/<int:id>')
+
+class TravelerItinerary(Resource):
+    
+    def get(self):
+        
+        response_dict = [itinerary for itinerary in traveler.itineraries]
+        
+        response = make_response(
+            response_dict,
+            200
+        )
+        
+        return response 
+    
+api.add_resource(TravelerItinerary, '/itinerary')
+
+
 
 
 

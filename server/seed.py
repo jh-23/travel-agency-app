@@ -52,15 +52,13 @@ with app.app_context():
         traveler_destinations_to_add = []
         
         traveler_destination1 = (TravelerDestination(
-            id=1,
             traveler_id=1,
             destination_id=1
         ))
         
         traveler_destination2 = (TravelerDestination(
-            id=2,
             traveler_id=2,
-            destination_id=1
+            destination_id=2
         ))
         
         traveler_destinations_to_add.append(traveler_destination1)
@@ -94,25 +92,21 @@ with app.app_context():
         activity_destinations_to_add = []
         
         activity_destination_1 = (ActivityDestination(
-            id=1,
             destination_id=1,
             activity_id=1
         ))
         
         activity_destination_2 = (ActivityDestination(
-            id=2,
             destination_id=1,
             activity_id=2
         ))
         
         activity_destination_3 = (ActivityDestination(
-            id=3,
             destination_id=2,
             activity_id=3
         ))
         
         activity_destination_4 = (ActivityDestination(
-            id=4,
             destination_id=2,
             activity_id=4
         ))

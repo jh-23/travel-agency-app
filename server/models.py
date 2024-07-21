@@ -6,13 +6,15 @@ from sqlalchemy.ext.hybrid import hybrid_property
 
 from config import db, bcrypt
 
+
 # Models go here
 
 class Traveler(db.Model, SerializerMixin):
     
     __tablename__ = 'travelers'
     
-    serialize_rules = ('-traveler_destinations.traveler', '-activities.traveler')
+    # serialize_rules = ('-traveler_destinations.traveler.traveler_destinations', '-activities.traveler', '-activities.destinations', '-activities.activity_destinations', '-traveler_destinations.destination.traveler_destinations', '-activities.destination.traveler_destinations', '-activities.destination.activity_destinations', '-travel_destinations.destination.activity_destinations', '-traveler_destinations.destination.activities')
+    serialize_rules = ('-traveler_destinations.traveler', '-activities', '-destinations.traveler_destinations', '-itineraries.activities')
     
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(50))
@@ -22,6 +24,13 @@ class Traveler(db.Model, SerializerMixin):
     traveler_destinations = db.relationship('TravelerDestination', back_populates='traveler', cascade='all, delete-orphan')
     
     activities = db.relationship('Activity', back_populates='traveler', cascade='all, delete-orphan')
+    
+    # Association Proxy
+    destinations = association_proxy('traveler_destinations', 'destination', creator=lambda destination_obj: TravelerDestination(destination=destination_obj))
+    
+    # Association Proxy
+    itineraries = association_proxy('activities', 'itinerary', creator=lambda itinerary_obj: Activity(itinerary=itinerary_obj))
+    
     
     @hybrid_property
     def password_hash(self):
@@ -61,7 +70,7 @@ class Destination(db.Model, SerializerMixin):
     
     __tablename__ = 'destinations'
     
-    serialize_rules = ('-traveler_destinations.destination', '-activity_destinations.destination', '-activities')
+    serialize_rules = ('-traveler_destinations.destination', '-activity_destinations.destination', '-activities.destinations')
     
     id = db.Column(db.Integer, primary_key=True)
     city = db.Column(db.String, nullable=False)
@@ -105,7 +114,7 @@ class Activity(db.Model, SerializerMixin):
     
     __tablename__ = 'activities'
     
-    serialize_rules = ('-traveler.activities', '-itinerary.activities', '-activity_destinations.activity', '-destinations')
+    serialize_rules = ('-traveler.activities', '-itinerary.activities', '-activity_destinations.activity', '-destinations.activity_destinations', '-destinations.activities')
     
     id = db.Column(db.Integer, primary_key=True)
     activity_name = db.Column(db.String, nullable=False)
