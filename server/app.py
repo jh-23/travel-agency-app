@@ -68,21 +68,6 @@ class AllDestinations(Resource):
     
 api.add_resource(AllDestinations, '/alldestinations')
 
-class AllDestinations1(Resource):
-    
-    def get(self):
-    
-        destination_list = [destination.to_dict() for destination in Destination.query.all()]
-    
-        response = make_response(
-            destination_list,
-            200
-        )
-    
-        return response
-
-api.add_resource(AllDestinations1, '/alldestinations1')
-
 
 class ActivityByDestination(Resource):
 
@@ -114,11 +99,13 @@ class Activities(Resource):
 
 api.add_resource(Activities, '/activities/<int:id>')
 
+
+
 class TravelerItinerary(Resource):
     
-    def get(self):
+    def get(self, id):
         
-        response_dict = [itinerary for itinerary in traveler.itineraries]
+        response_dict = Traveler.query.filter_by(id=id).first().to_dict(only=('activities.itinerary.name',))
         
         response = make_response(
             response_dict,
@@ -127,7 +114,7 @@ class TravelerItinerary(Resource):
         
         return response 
     
-api.add_resource(TravelerItinerary, '/itinerary')
+api.add_resource(TravelerItinerary, '/itinerary/<int:id>')
 
 
 
