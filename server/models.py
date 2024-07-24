@@ -120,6 +120,8 @@ class Activity(db.Model, SerializerMixin):
     activity_name = db.Column(db.String, nullable=False)
     activity_description = db.Column(db.String, nullable=False)
     activity_image = db.Column(db.String, nullable=False)
+    start_date = db.Column(db.Date, nullable=False)
+    end_date = db.Column(db.Date, nullable=False)
     
     #Foreign Keys
     traveler_id = db.Column(db.Integer, db.ForeignKey('travelers.id'))
@@ -146,9 +148,8 @@ class Itinerary(db.Model, SerializerMixin):
     
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False)
-    start_date = db.Column(db.Date, nullable=False)
-    end_date = db.Column(db.Date, nullable=False)
-    
+
+
     # Relationship mapping the Itinerary to related Activities 
     
     activities = db.relationship('Activity', back_populates='itinerary', cascade='all, delete-orphan')

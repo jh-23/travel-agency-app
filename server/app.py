@@ -69,58 +69,70 @@ class AllDestinations(Resource):
 api.add_resource(AllDestinations, '/alldestinations')
 
 
+
 class ActivityByDestination(Resource):
-
-    def get(self, id):
-    
-        response_dict = Destination.query.filter_by(id=id).first().to_dict(only=('activity_destinations.activity.activity_description', 'activity_destinations.activity.activity_image', 'activity_destinations.activity.activity_name'))
-        
-        response = make_response(
-            response_dict,
-            200
-        )
-        
-        return response 
-    
-api.add_resource(ActivityByDestination, '/activitybydestination/<int:id>')
-
-class Activities(Resource):
     
     def get(self, id):
         
-        response_dict = Activity.query.filter_by(id=id).first().to_dict()
+        destination = Destination.query.filter_by(id=id).first()
         
+        if not destination:
+            return make_response({'error': 'Destination not found'}, 404)
+        
+        # Collect unique activities using a set comprehension and then convert to a list
+        unique_activities = list({activity for activity in destination.activities})
+        
+        response_dict = [activity.to_dict(only=('activity_description', 'activity_name', 'activity_image')) for activity in unique_activities]
+
         response = make_response(
             response_dict,
             200
         )
         
         return response
+    
+api.add_resource(ActivityByDestination, '/activitybydestination/<int:id>')
 
-api.add_resource(Activities, '/activities/<int:id>')
-
+class AddActivities(Resource):
+    
+    def post(self):
+        pass
+    
+        
+        
+# class TravelerItinerary(Resource):
+    
+#     def get(self, id):
+        
+#         response_dict = Traveler.query.filter_by(id=id).first().to_dict(only=('activities.itinerary.name',))
+        
+#         response = make_response(
+#             response_dict,
+#             200
+#         )
+        
+#         return response 
+    
+# api.add_resource(TravelerItinerary, '/itinerary/<int:id>')
 
 
 class TravelerItinerary(Resource):
     
     def get(self, id):
         
-        response_dict = Traveler.query.filter_by(id=id).first().to_dict(only=('activities.itinerary.name',))
+        traveler = Traveler.query.filter_by(id=id).first()
         
-        response = make_response(
-            response_dict,
-            200
-        )
+        if not traveler:
+            return make_response({'error': 'Traveler not found'}, 404)
+        
+        # Collect unique itineraries using a set comprehension and then convert to a list
+        unique_itineraries = list({activity.itinerary.name for activity in traveler.activities if activity.itinerary})
+        
+        response = make_response({'itineraries': unique_itineraries}, 200)
         
         return response 
     
 api.add_resource(TravelerItinerary, '/itinerary/<int:id>')
-
-
-
-
-
-
 
 
 
@@ -208,6 +220,22 @@ class Signup(Resource):
             return {'error': 'Invalid login credentials'}, 401
         
 api.add_resource(Signup, '/signup', endpoint='signup')
+
+
+# class ActivityByDestination(Resource):
+
+#     def get(self, id):
+    
+#         response_dict = Destination.query.filter_by(id=id).first().to_dict(only=('activity_destinations.activity.activity_description', 'activity_destinations.activity.activity_image', 'activity_destinations.activity.activity_name'))
+        
+#         response = make_response(
+#             response_dict,
+#             200
+#         )
+        
+#         return response 
+    
+# api.add_resource(ActivityByDestination, '/activitybydestination/<int:id>')
 
 if __name__ == '__main__':
     app.run(port=7777, debug=True)
