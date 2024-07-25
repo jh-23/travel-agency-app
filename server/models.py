@@ -154,3 +154,4 @@ class Itinerary(db.Model, SerializerMixin):
     
     activities = db.relationship('Activity', back_populates='itinerary', cascade='all, delete-orphan')
     
+   

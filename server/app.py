@@ -93,11 +93,37 @@ class ActivityByDestination(Resource):
     
 api.add_resource(ActivityByDestination, '/activitybydestination/<int:id>')
 
-class AddActivities(Resource):
+class AddActivityToItinerary(Resource):
     
-    def post(self):
-        pass
+    def post(self, id):
+        
+        json = request.get_json()
+        
+        traveler = Traveler.query.filter_by(id=id).first()
+        
+        added_activity = Activity(
+            activity_name = json.get('activity_name'),
+            activity_description = json.get('activity_description'),
+            activity_image = json.get('activity_image'),
+            start_date = json.get('start_date'),
+            end_date = json.get('end_date'),
+            traveler_id = json.get('traveler_id'),
+            itinerary_id = json.get('itinerary_id')
+        )
     
+        db.session.add(added_activity)
+        db.session.commit()
+        
+        response_dict = added_activity.to_dict()
+        
+        response = make_response(
+            response_dict,
+            201
+        )
+        
+        return response
+
+api.add_resource(AddActivityToItinerary, '/added_activity_to_itinerary')
         
         
 # class TravelerItinerary(Resource):
@@ -133,6 +159,11 @@ class TravelerItinerary(Resource):
         return response 
     
 api.add_resource(TravelerItinerary, '/itinerary/<int:id>')
+
+
+
+
+
 
 
 

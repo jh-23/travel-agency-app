@@ -185,6 +185,8 @@ with app.app_context():
             id=2,
             name="Zurich Trip"
         ))
+        
+        itinerary_1.activities.append(activity_1)
     
         itineraries_to_add.append(itinerary_1)
         itineraries_to_add.append(itinerary_2)
