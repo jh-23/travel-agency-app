@@ -70,7 +70,7 @@ class Destination(db.Model, SerializerMixin):
     
     __tablename__ = 'destinations'
     
-    serialize_rules = ('-traveler_destinations.destination', '-activity_destinations.destination', '-activities.destinations')
+    serialize_rules = ('-traveler_destinations.destination', '-activity_destinations.destination', '-activities.destinations', '-available_activities.destination')
     
     id = db.Column(db.Integer, primary_key=True)
     city = db.Column(db.String, nullable=False)
@@ -83,6 +83,8 @@ class Destination(db.Model, SerializerMixin):
     
     # Relationship mapping the Destination to related Activity 
     activity_destinations = db.relationship('ActivityDestination', back_populates='destination', cascade='all, delete-orphan')
+    
+    available_activities = db.relationship('AvailableActivity', back_populates='destination')
     
     # Need to build association relationship -> #association_proxy = to associate activities with the Destination (condense information into a clearer list)
     # Association proxy to get Actvities for this destination through ActivityDestination
@@ -139,6 +141,35 @@ class Activity(db.Model, SerializerMixin):
     # Association proxy to get destinations for this activity through ActivityDestination
     destinations = association_proxy('activity_destinations', 'destination', creator=lambda destination_obj: ActivityDestination(destination=destination_obj))
     
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'activity_name': self.activity_name,
+            'activity_description': self.activity_description,
+            'activity_image': self.activity_image,
+            'start_date': self.start_date.strftime('%Y-%m-%d'),
+            'end_date': self.end_date.strftime('%Y-%m-%d'),
+            'traveler_id': self.traveler_id,
+            'itinerary_id': self.itinerary_id
+        }
+        
+class AvailableActivity(db.Model, SerializerMixin):
+    
+    __tablename__ = 'available_activities'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    activity_name = db.Column(db.String, nullable=False)
+    activity_description = db.Column(db.String, nullable=False)
+    activity_image = db.Column(db.String, nullable=False)
+    start_date = db.Column(db.Date, nullable=False)
+    end_date = db.Column(db.Date, nullable=False)
+    
+    # foreign key
+    destination_id = db.Column(db.Integer, db.ForeignKey('destinations.id'))
+    
+    # Relationship mapping the Available Actities to related destination
+    destination = db.relationship('Destination', back_populates='available_activities')
+    
     
 class Itinerary(db.Model, SerializerMixin):
     
@@ -154,4 +185,9 @@ class Itinerary(db.Model, SerializerMixin):
     
     activities = db.relationship('Activity', back_populates='itinerary', cascade='all, delete-orphan')
     
-   
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'activities': [activity.to_dict() for activity in self.activities]
+        }

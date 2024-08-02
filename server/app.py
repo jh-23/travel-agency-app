@@ -7,11 +7,12 @@ from flask import request, make_response, session, jsonify
 from flask_restful import Resource
 from flask_cors import CORS
 from sqlalchemy.exc import IntegrityError
+from datetime import datetime
 
 # Local imports
 from config import app, db, api
 # Add your model imports
-from models import Traveler, TravelerDestination, Destination, ActivityDestination, Activity, Itinerary
+from models import Traveler, TravelerDestination, Destination, ActivityDestination, AvailableActivity, Activity, Itinerary
 
 # Views go here!
 
@@ -80,7 +81,7 @@ class ActivityByDestination(Resource):
             return make_response({'error': 'Destination not found'}, 404)
         
         # Collect unique activities using a set comprehension and then convert to a list
-        unique_activities = list({activity for activity in destination.activities})
+        unique_activities = list({activity for activity in destination.available_activities})
         
         response_dict = [activity.to_dict(only=('activity_description', 'activity_name', 'activity_image')) for activity in unique_activities]
 
@@ -95,21 +96,30 @@ api.add_resource(ActivityByDestination, '/activitybydestination/<int:id>')
 
 class AddActivityToItinerary(Resource):
     
-    def post(self, id):
+    def post(self):
         
         json = request.get_json()
         
-        traveler = Traveler.query.filter_by(id=id).first()
+        start_date = datetime.strptime(json.get('start_date'), '%m/%d/%Y').date()
+        end_date = datetime.strptime(json.get('end_date'), '%m/%d/%Y').date()
+        
+        itinerary_id = json.get('itinerary_id')
+        itinerary = db.session.get(Itinerary, itinerary_id)
+        
+        if not itinerary:
+            return {"message": "Itinerary not found"}, 404
         
         added_activity = Activity(
             activity_name = json.get('activity_name'),
             activity_description = json.get('activity_description'),
             activity_image = json.get('activity_image'),
-            start_date = json.get('start_date'),
-            end_date = json.get('end_date'),
+            start_date = start_date,
+            end_date = end_date,
             traveler_id = json.get('traveler_id'),
             itinerary_id = json.get('itinerary_id')
         )
+        
+        # itinerary.activities.append(added_activity)
     
         db.session.add(added_activity)
         db.session.commit()
@@ -123,7 +133,45 @@ class AddActivityToItinerary(Resource):
         
         return response
 
-api.add_resource(AddActivityToItinerary, '/added_activity_to_itinerary')
+api.add_resource(AddActivityToItinerary, '/add_activity_to_itinerary')
+        
+class TravelerActivititesToItineraryGet(Resource):
+    
+    def get(self, itinerary_id):     
+        
+        itinerary = db.session.get(Itinerary, itinerary_id)
+        if not itinerary:
+            return {"message": "Itinerary not found"}, 404
+        
+        response_dict = itinerary.to_dict()
+        return make_response(
+            response_dict,
+            200
+        )
+        
+api.add_resource(TravelerActivititesToItineraryGet, '/get_traveler_itinerary/<int:itinerary_id>')
+
+class DeleteActivityFromItinerary(Resource):
+    
+    def delete(self, id):
+        
+        activity = Activity.query.filter_by(id=id).first()
+        
+        if not activity:
+            return {'message': 'Activity not found or does not belong to the specificed traveler and itinerary'}, 404
+        
+        db.session.delete(activity)
+        db.session.commit()
+    
+        response = make_response(
+            {'message': 'successful deletion of activity from itinerary'},
+            202
+        )
+        
+        return response
+    
+api.add_resource(DeleteActivityFromItinerary, '/delete_activity/<int:id>')
+            
         
         
 # class TravelerItinerary(Resource):
