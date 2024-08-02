@@ -171,6 +171,40 @@ class DeleteActivityFromItinerary(Resource):
         return response
     
 api.add_resource(DeleteActivityFromItinerary, '/delete_activity/<int:id>')
+
+class UpdateActivityFromItinerary(Resource):
+    
+    def patch(self, id):
+        
+        json = request.get_json()
+        
+        activity = Activity.query.filter(Activity.id == id).first()
+        if not activity:
+            return {'message': 'Activity not found'}, 404
+        
+        if 'start_date' in json:
+            start_date = datetime.strptime(json.get('start_date'), '%m/%d/%Y').date()
+            activity.start_date = start_date
+        
+        if 'end_date' in json:
+            end_date = datetime.strptime(json.get('end_date'), '%m/%d/%Y').date()
+            activity.end_date = end_date
+        
+        for attr, value in json.items():
+            if attr not in ['start_date', 'end_date']:
+                setattr(activity, attr, value)
+        
+        db.session.add(activity)
+        db.session.commit()
+        
+        response = make_response(
+            activity.to_dict(),
+            200
+        )
+        
+        return response 
+    
+api.add_resource(UpdateActivityFromItinerary, '/updated_activity_on_itinerary/<int:id>')
             
         
         
