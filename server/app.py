@@ -39,9 +39,9 @@ api.add_resource(Travelers, '/travelers')
 
 class TravelerDestinations(Resource):
     
-    def get(self, id):
+    def get(self):
         
-        response_dict = Traveler.query.filter_by(id=id).first().to_dict(only=('traveler_destinations.destination.city', 'traveler_destinations.destination.state', 'traveler_destinations.destination.country', 'traveler_destinations.destination.image'))
+        response_dict = Traveler.query.filter_by(id=session['traveler_id']).first().to_dict(only=('traveler_destinations.destination.city', 'traveler_destinations.destination.state', 'traveler_destinations.destination.country', 'traveler_destinations.destination.image'))
         
         response = make_response(
             response_dict,
@@ -50,7 +50,7 @@ class TravelerDestinations(Resource):
         
         return response
     
-api.add_resource(TravelerDestinations, '/travelerdestinations/<int:id>')
+api.add_resource(TravelerDestinations, '/travelerdestinations')
 
 # single traveler resource
 
@@ -241,12 +241,6 @@ class TravelerItinerary(Resource):
         return response 
     
 api.add_resource(TravelerItinerary, '/itinerary/<int:id>')
-
-
-
-
-
-
 
 
 
