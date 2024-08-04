@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import Input from './Input';
 
 function LoginForm({ setTraveler }) {
 
@@ -30,28 +31,42 @@ function LoginForm({ setTraveler }) {
 
     return(
         <div>
+            <h1>Welcome to the Travel Agency App</h1>
+            <h4>Please sign in to view travel information: </h4>
+            <br />
             <form onSubmit={handleSubmit}>
-                <label htmlFor='username'>Username</label>
-                <input
-                type='text'
-                id='username'
-                autoComplete='off'
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}>
-                </input>
+                <div>
+                    <label htmlFor='username'>Username: </label>
+                    <Input
+                    type='text'
+                    id='username'
+                    autoComplete='off'
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}>
+                </Input>
+                </div>
                 <br />
-                <label htmlFor='password'>Password</label>
-                <input
-                type='text'
-                id='username'
-                autoComplete='current-password'
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}>
-                </input>
-                <button variant='fill' color='primary' type='submit'>
+                <div>
+                    <label htmlFor='password'>Password: </label>
+                    <Input
+                    type='password'
+                    id='password'
+                    autoComplete='current-password'
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}>
+                    </Input>
+                </div>
+                <button type='submit' className="btn btn-blue">
                     {isLoading ? "Loading..." : "Login"}
                 </button>
             </form>
+            {errors.length > 0 && (
+                <div>
+                    {errors.map((error, index) => (
+                        <p key={index} style={{ color: 'red' }}>{error}</p>
+                    ))}
+                </div>
+            )}
         </div>
     )
 }

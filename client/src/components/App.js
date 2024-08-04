@@ -19,14 +19,14 @@ function App() {
 
   console.log(traveler)
 
-  
+
 
   return(
     <div className="App">
         <header>
         <NavBar />
         </header>
-        <h1 className='text-6xl'>Travel Agency App</h1>;
+        <h1 className='text-6xl'>Travel Agency App</h1>
     </div>
   )
 }

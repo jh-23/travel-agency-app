@@ -1,9 +1,21 @@
-import React from 'react';
+import React, { useContext } from 'react';
+import { Context } from './Context';
 
 function Logout() {
+
+    const { setTraveler } = useContext(Context);
+
+    function handleLogoutClick() {
+        fetch("/logout", { method: "DELETE" }).then((r) => {
+            if (r.ok) {
+                setTraveler(null)
+            }
+        })
+    }
+
     return(
         <div>
-            <h1>Logout</h1>
+            <button onClick={handleLogoutClick}></button>
         </div>
     )
 }

@@ -6,7 +6,7 @@ function Destinations() {
     const [destinations, setDestinations] = useState([]);
 
     useEffect(() => {
-        fetch(`/travelerdestinations`)
+        fetch("/travelerdestinations")
             .then((r) => {
                 if(!r.ok) {
                     throw new Error('Network response was not ok');
