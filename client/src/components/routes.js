@@ -16,19 +16,19 @@ const routes = [
                 element: <Home />
             },
             {
-                index: "/destinations",
+                path: "/destinations",
                 element: <Destinations />
             },
             {
-                index: "/itineraries",
+                path: "/itineraries",
                 element: <Itinerary />
             },
             {
-                index: "/calendar",
+                path: "/calendar",
                 element: <Calendar />
             }, 
             {
-                index: "/logout",
+                path: "/logout",
                 element: <Logout />
             }
         ]
