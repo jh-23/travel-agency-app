@@ -6,16 +6,20 @@ function Logout() {
     const { setTraveler } = useContext(Context);
 
     function handleLogoutClick() {
+        console.log("hello")
         fetch("/logout", { method: "DELETE" }).then((r) => {
+            
             if (r.ok) {
                 setTraveler(null)
             }
         })
     }
 
+
+
     return(
         <div>
-            <button onClick={handleLogoutClick}></button>
+            <button id='test' onClick={() => handleLogoutClick()}></button>
         </div>
     )
 }

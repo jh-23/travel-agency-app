@@ -1,15 +1,15 @@
 import { useState, createContext } from 'react';
 const Context = createContext()
 
-function ContextProvider(props) {
+function ContextProvider({ children }) {
 
     const [traveler, setTraveler] = useState([]);
     const [destinations, setDestinations] = useState([]);
 
     return(
-        <ContextProvider value ={{traveler, setTraveler, destinations, setDestinations}}>
-            {props.children}
-        </ContextProvider>
+        <Context.Provider value ={{traveler, setTraveler, destinations, setDestinations}}>
+            {children}
+        </Context.Provider>
     )
 }
 
