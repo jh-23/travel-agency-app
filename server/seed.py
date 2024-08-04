@@ -33,14 +33,16 @@ with app.app_context():
         traveler1 = (Traveler(
             id=1,
             username="billyjane",
-            birth_date=datetime(1980, 3, 25)
+            birth_date=datetime(1980, 3, 25),
+            email = "billyjane@gmail.com"
         ))
         traveler1.password_hash = "welttraveler8"
         
         traveler2 = (Traveler(
             id=2,
             username="sarahjane",
-            birth_date=datetime(1985, 11, 1)
+            birth_date=datetime(1985, 11, 1),
+            email = "sarahjane@gmail.com"
         ))
         traveler2.password_hash = "9899trail0"
         

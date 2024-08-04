@@ -3,7 +3,7 @@
 # Standard library imports
 
 # Remote library imports
-from flask import request, make_response, session, jsonify
+from flask import request, make_response, session
 from flask_restful import Resource
 from flask_cors import CORS
 from sqlalchemy.exc import IntegrityError
@@ -41,7 +41,7 @@ class TravelerDestinations(Resource):
     
     def get(self):
         
-        response_dict = Traveler.query.filter_by(id=session['traveler_id']).first().to_dict(only=('traveler_destinations.destination.city', 'traveler_destinations.destination.state', 'traveler_destinations.destination.country', 'traveler_destinations.destination.image'))
+        response_dict = Traveler.query.filter(Traveler.id == session['traveler_id']).first().to_dict(only=('traveler_destinations.destination.city', 'traveler_destinations.destination.state', 'traveler_destinations.destination.country', 'traveler_destinations.destination.image'))
         
         response = make_response(
             response_dict,
@@ -243,7 +243,6 @@ class TravelerItinerary(Resource):
 api.add_resource(TravelerItinerary, '/itinerary/<int:id>')
 
 
-
 class Login(Resource):
     
     def post(self):
@@ -345,5 +344,5 @@ api.add_resource(Signup, '/signup', endpoint='signup')
 # api.add_resource(ActivityByDestination, '/activitybydestination/<int:id>')
 
 if __name__ == '__main__':
-    app.run(port=7777, debug=True)
+    app.run(port=5555, debug=True)
 

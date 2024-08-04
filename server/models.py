@@ -17,8 +17,9 @@ class Traveler(db.Model, SerializerMixin):
     serialize_rules = ('-traveler_destinations.traveler', '-activities', '-destinations.traveler_destinations', '-itineraries.activities')
     
     id = db.Column(db.Integer, primary_key=True)
+    email = db.String(db.String(50))
     username = db.Column(db.String(50))
-    _password_hash = db.Column(db.String(50))
+    _password_hash = db.Column(db.String(128), nullable=False)
     birth_date = db.Column(db.String)
     
     traveler_destinations = db.relationship('TravelerDestination', back_populates='traveler', cascade='all, delete-orphan')
