@@ -1,12 +1,13 @@
-import React, { useState, useEffect} from 'react';
-import { useParams } from 'react-router-dom'
+import React, { useState, useEffect, useContext} from 'react';
+import { Context } from './Context';
 
 function Destinations() {
 
-    const [destinations, setDestinations] = useState([]);
+    const { destinations, setDestinations } = useContext(Context);
+
 
     useEffect(() => {
-        fetch("/travelerdestinations")
+        fetch("/alldestinations")
             .then((r) => {
                 if(!r.ok) {
                     throw new Error('Network response was not ok');
@@ -20,7 +21,7 @@ function Destinations() {
                 setDestinations(destinations)
             })
             .catch((error) => {
-                console.error('Error fetching podcasts: ', error)
+                console.error('Error fetching destinations: ', error)
             })
     }, [setDestinations])
 
@@ -28,7 +29,9 @@ function Destinations() {
         return <h1>Loading...</h1>
     }
 
-    console.log(destinations);
+    console.log(destinations[0].city);
+    const cities = destinations.map((destination) => destination.city)
+    console.log(cities)
 
     return(
         <div>

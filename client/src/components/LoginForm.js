@@ -1,13 +1,13 @@
-import React, { useState } from 'react';
+import React, { useContext } from 'react';
 import Input from './Input';
+import { Context } from './Context';
+import { useNavigate } from 'react-router-dom';
 
-function LoginForm({ setTraveler }) {
+function LoginForm() {
 
-    const [username, setUsername] = useState("");
-    const [password, setPassword] = useState("");
-    const [errors, setErrors] = useState([]);
-    const [isLoading, setIsLoading] = useState(false);
-    const [showSignUp, setShowSignUp] = useState(false);
+    const { username, setUsername, password, setPassword, isLoading, setIsLoading, errors, setErrors, setTraveler } = useContext(Context);
+
+    const navigate = useNavigate();
 
     function handleSubmit(e) {
         e.preventDefault();
@@ -26,6 +26,7 @@ function LoginForm({ setTraveler }) {
                 r.json().then((err) => setErrors(err.errors))
             }
         })
+        navigate('/')
     }
 
 

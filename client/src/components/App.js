@@ -15,9 +15,6 @@ function App() {
     })
   }, [])
 
-  if(!traveler) return <LoginForm setTraveler={setTraveler} />
-
-  console.log(traveler)
 
 
 
