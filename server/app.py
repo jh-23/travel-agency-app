@@ -70,7 +70,6 @@ class AllDestinations(Resource):
 api.add_resource(AllDestinations, '/alldestinations')
 
 
-
 class ActivityByDestination(Resource):
     
     def get(self, id):
@@ -206,7 +205,6 @@ class UpdateActivityFromItinerary(Resource):
     
 api.add_resource(UpdateActivityFromItinerary, '/updated_activity_on_itinerary/<int:id>')
             
-        
         
 # class TravelerItinerary(Resource):
     

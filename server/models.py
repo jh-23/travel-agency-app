@@ -48,6 +48,14 @@ class Traveler(db.Model, SerializerMixin):
             self._password_hash, password.encode('utf-8')
         )
     
+    # validation
+    @validates('username')
+    def validate_username(self, key, username):
+        if 4 <= len(username) <= 16:
+            return username
+        else:
+            raise ValueError('Username must be between 4 and 16 characters, inclusive')
+    
     
 class TravelerDestination(db.Model, SerializerMixin):
     
@@ -66,6 +74,23 @@ class TravelerDestination(db.Model, SerializerMixin):
     
     # relationship method maps our TravelerDestination to Destination
     destination = db.relationship('Destination', back_populates='traveler_destinations')
+    
+# class AvailableDestination(db.Model, SerializerMixin):
+    
+#     __tablename__ = 'available_destinations'
+    
+#     serialize_rules = ()
+    
+#     id = db.Column(db.Integer, primary_key=True)
+#     city = db.Column(db.String, nullable=False)
+#     state = db.Column(db.String)
+#     country = db.Column(db.String, nullable=False)
+#     image = db.Column(db.String)
+
+# Foreign Key
+
+    
+    
     
 class Destination(db.Model, SerializerMixin):
     
