@@ -1,9 +1,14 @@
-import React, { useState, useEffect, useContext} from 'react';
+import React, { useEffect, useContext} from 'react';
 import { Context } from './Context';
+import { useNavigate } from 'react-router-dom';
+import DestinationCard from './DestinationCard';
+
 
 function Destinations() {
 
-    const { destinations, setDestinations } = useContext(Context);
+    const { destinations, setDestinations, destinationId, setDestinationId } = useContext(Context);
+
+    const navigate = useNavigate();
 
 
     useEffect(() => {
@@ -29,13 +34,20 @@ function Destinations() {
         return <h1>Loading...</h1>
     }
 
-    console.log(destinations[0].city);
-    const cities = destinations.map((destination) => destination.city)
+    console.log(destinations)
+    const cities = destinations.map((destination) => destination)
     console.log(cities)
+
 
     return(
         <div>
-            <h1>Destinations</h1>
+            <h1>Select Destination where you'd like to travel and view travel activities: </h1>
+            <div className='destination-container'>
+                {destinations.map((destination) => (
+                    <DestinationCard key={destination.id} destination={destination} />
+                ))}
+            </div>
+
         </div>
     )
 }
